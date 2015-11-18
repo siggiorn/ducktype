@@ -43,10 +43,17 @@
    * Test whether an object matches this DuckType.
    * Throws a TypeError when the object does not match.
    * @param {*} object
+   * @param {String?} message optional error message
    */
-  DuckType.prototype.validate = function (object) {
+  DuckType.prototype.validate = function (object, message) {
     if (!this.test(object)) {
-      throw new TypeError(object + ' is not a valid ' + (this.name || 'type'));
+      var errorMsg = '';
+      if (message) {
+        errorMsg += '"' + message + '": ';
+      }
+      errorMsg += object + ' is not a valid ' + (this.name || 'type');
+
+      throw new TypeError(errorMsg);
     }
   };
 
@@ -117,7 +124,7 @@
   basic.object = new DuckType({
     name: 'Object',
     test: function isObject(object) {
-      return ((object instanceof Object) && (object.constructor === Object));
+      return ((object !== null) && (typeof object === 'object'));
     }
   });
 
